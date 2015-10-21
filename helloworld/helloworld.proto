@@ -27,10 +27,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-syntax = "proto3";
+syntax = "proto2";
 
 option java_package = "io.grpc.examples";
-option objc_class_prefix = "HLW";
 
 package helloworld;
 
@@ -42,10 +41,10 @@ service Greeter {
 
 // The request message containing the user's name.
 message HelloRequest {
-  string name = 1;
+  required string name = 1;
 }
 
 // The response message containing the greetings
 message HelloReply {
-  string message = 1;
+  required string message = 1;
 }
