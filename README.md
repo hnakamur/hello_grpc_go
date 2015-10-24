@@ -104,3 +104,10 @@ fop -xml doc/helloworld.docbook \
     -param page.orientation landscape \
     -pdf doc/helloworld.pdf
 ```
+
+You can see generated API documents:
+
+* [index.html](http://hnakamur.github.io/hello_grpc_go/doc/)
+* [helloworld.md](https://github.com/hnakamur/hello_grpc_go/blob/protobuf_v2/doc/helloworld.md)
+* [helloworld.docbook](https://raw.githubusercontent.com/hnakamur/hello_grpc_go/protobuf_v2/doc/helloworld.docbook)
+* [helloworld.pdf](http://hnakamur.github.io/hello_grpc_go/doc/helloworld.pdf)
