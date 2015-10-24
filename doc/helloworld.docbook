@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <title>Protocol Documentation</title>
+  <section>
+    <title>helloworld.proto</title>
+    <section id="helloworld.HelloReply">
+      <title>HelloReply</title>
+      <para></para>
+      <informaltable frame="all">
+        <tgroup cols="4">
+          <colspec colwidth="*"/>
+          <colspec colwidth="*"/>
+          <colspec colwidth="0.5*"/>
+          <colspec colwidth="3*"/>
+          <thead>
+            <row>
+              <entry>Field</entry>
+              <entry>Type</entry>
+              <entry>Label</entry>
+              <entry>Description</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>message</entry>
+              <entry><link linkend="string">string</link></entry>
+              <entry>required</entry>
+              <entry><para></para></entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </section>
+    <section id="helloworld.HelloRequest">
+      <title>HelloRequest</title>
+      <para></para>
+      <informaltable frame="all">
+        <tgroup cols="4">
+          <colspec colwidth="*"/>
+          <colspec colwidth="*"/>
+          <colspec colwidth="0.5*"/>
+          <colspec colwidth="3*"/>
+          <thead>
+            <row>
+              <entry>Field</entry>
+              <entry>Type</entry>
+              <entry>Label</entry>
+              <entry>Description</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>name</entry>
+              <entry><link linkend="string">string</link></entry>
+              <entry>required</entry>
+              <entry><para></para></entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </section>
+  </section>
+
+  <section>
+    <title>Scalar Value Types</title>
+    <informaltable frame="all">
+      <tgroup cols="5">
+        <colspec colwidth="*"/>
+        <colspec colwidth="5*"/>
+        <colspec colwidth="*"/>
+        <colspec colwidth="*"/>
+        <colspec colwidth="*"/>
+        <thead>
+          <row>
+            <entry>.proto Type</entry>
+            <entry>Notes</entry>
+            <entry>C++ Type</entry>
+            <entry>Java Type</entry>
+            <entry>Python Type</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry id="double">double</entry>
+            <entry></entry>
+            <entry>double</entry>
+            <entry>double</entry>
+            <entry>float</entry>
+          </row>
+          <row>
+            <entry id="float">float</entry>
+            <entry></entry>
+            <entry>float</entry>
+            <entry>float</entry>
+            <entry>float</entry>
+          </row>
+          <row>
+            <entry id="int32">int32</entry>
+            <entry>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.</entry>
+            <entry>int32</entry>
+            <entry>int</entry>
+            <entry>int</entry>
+          </row>
+          <row>
+            <entry id="int64">int64</entry>
+            <entry>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.</entry>
+            <entry>int64</entry>
+            <entry>long</entry>
+            <entry>int/long</entry>
+          </row>
+          <row>
+            <entry id="uint32">uint32</entry>
+            <entry>Uses variable-length encoding.</entry>
+            <entry>uint32</entry>
+            <entry>int</entry>
+            <entry>int/long</entry>
+          </row>
+          <row>
+            <entry id="uint64">uint64</entry>
+            <entry>Uses variable-length encoding.</entry>
+            <entry>uint64</entry>
+            <entry>long</entry>
+            <entry>int/long</entry>
+          </row>
+          <row>
+            <entry id="sint32">sint32</entry>
+            <entry>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.</entry>
+            <entry>int32</entry>
+            <entry>int</entry>
+            <entry>int</entry>
+          </row>
+          <row>
+            <entry id="sint64">sint64</entry>
+            <entry>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.</entry>
+            <entry>int64</entry>
+            <entry>long</entry>
+            <entry>int/long</entry>
+          </row>
+          <row>
+            <entry id="fixed32">fixed32</entry>
+            <entry>Always four bytes. More efficient than uint32 if values are often greater than 2^28.</entry>
+            <entry>uint32</entry>
+            <entry>int</entry>
+            <entry>int</entry>
+          </row>
+          <row>
+            <entry id="fixed64">fixed64</entry>
+            <entry>Always eight bytes. More efficient than uint64 if values are often greater than 2^56.</entry>
+            <entry>uint64</entry>
+            <entry>long</entry>
+            <entry>int/long</entry>
+          </row>
+          <row>
+            <entry id="sfixed32">sfixed32</entry>
+            <entry>Always four bytes.</entry>
+            <entry>int32</entry>
+            <entry>int</entry>
+            <entry>int</entry>
+          </row>
+          <row>
+            <entry id="sfixed64">sfixed64</entry>
+            <entry>Always eight bytes.</entry>
+            <entry>int64</entry>
+            <entry>long</entry>
+            <entry>int/long</entry>
+          </row>
+          <row>
+            <entry id="bool">bool</entry>
+            <entry></entry>
+            <entry>bool</entry>
+            <entry>boolean</entry>
+            <entry>boolean</entry>
+          </row>
+          <row>
+            <entry id="string">string</entry>
+            <entry>A string must always contain UTF-8 encoded or 7-bit ASCII text.</entry>
+            <entry>string</entry>
+            <entry>String</entry>
+            <entry>str/unicode</entry>
+          </row>
+          <row>
+            <entry id="bytes">bytes</entry>
+            <entry>May contain any arbitrary sequence of bytes.</entry>
+            <entry>string</entry>
+            <entry>ByteString</entry>
+            <entry>str</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </section>
+
+</article>
