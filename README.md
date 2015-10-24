@@ -57,3 +57,50 @@ cd helloworld
 protoc --go_out=plugins=grpc:. *.proto
 ```
 
+### Generate API documents
+
+#### Install protoc-gen-doc
+
+I installed [estan/protoc-gen-doc](https://github.com/estan/protoc-gen-doc) with the following steps.
+
+```
+brew install protobuf
+
+brew install qt5
+brew link qt5 --force
+
+export PROTOBUF_PREFIX=/usr/local/Cellar/protobuf/2.6.1
+qmake
+make
+make install
+```
+
+Also install packages to build PDF files from DocBook files.
+
+```
+brew install fop docbook-xsl
+```
+
+#### Build API documents
+
+Generate API documents with the following steps.
+
+```
+brew install fop docbook-xsl
+
+cd "$GOPATH/src/github.com/hnakamur/hello_grpc_go"
+git checkout protobuf_v2
+mkdir doc
+protoc --doc_out=html,index.html:doc helloworld/*.proto
+protoc --doc_out=markdown,helloworld.md:doc helloworld/*.proto
+protoc --doc_out=docbook,helloword.docbook:doc helloworld/*.proto
+
+DOCBOOK_XSL=/usr/local/Cellar/docbook-xsl/1.78.1_1/docbook-xsl-ns/fo/docbook.xsl
+fop -xml doc/helloworld.docbook \
+    -xsl "$DOCBOOK_XSL" \
+    -param use.extensions 0 \
+    -param fop1.extensions 1 \
+    -param paper.type A4 \
+    -param page.orientation landscape \
+    -pdf doc/helloworld.pdf
+```
