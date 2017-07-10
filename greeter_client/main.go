@@ -34,8 +34,10 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"log"
-	"os"
+	"time"
 
 	pb "github.com/hnakamur/hello_grpc_go/helloworld"
 	"golang.org/x/net/context"
@@ -48,22 +50,43 @@ const (
 )
 
 func main() {
+	addr := flag.String("addr", "localhost:50051", "server address")
+	name := flag.String("name", defaultName, "name")
+	loop := flag.Bool("loop", false, "enable loop")
+	sleep := flag.Duration("sleep", 10*time.Millisecond, "sleep time in loop")
+	flag.Parse()
+
+	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+
+	if *loop {
+		for {
+			err := sayHello(*addr, *name)
+			if err != nil {
+				log.Print(err)
+			}
+			time.Sleep(*sleep)
+		}
+	} else {
+		err := sayHello(*addr, *name)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
+func sayHello(address, name string) error {
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		return err
 	}
 	defer conn.Close()
 	c := pb.NewGreeterClient(conn)
 
-	// Contact the server and print out its response.
-	name := defaultName
-	if len(os.Args) > 1 {
-		name = os.Args[1]
-	}
 	r, err := c.SayHello(context.Background(), &pb.HelloRequest{Name: name})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		return fmt.Errorf("could not greet: %v", err)
 	}
 	log.Printf("Greeting: %s", r.Message)
+	return nil
 }
