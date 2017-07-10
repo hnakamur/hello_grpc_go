@@ -36,6 +36,9 @@ package main
 import (
 	"log"
 	"net"
+	"os"
+	"os/signal"
+	"syscall"
 
 	pb "github.com/hnakamur/hello_grpc_go/helloworld"
 	"golang.org/x/net/context"
@@ -55,11 +58,28 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 }
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
 	pb.RegisterGreeterServer(s, &server{})
-	s.Serve(lis)
+
+	go func() {
+		s.Serve(lis)
+		log.Printf("after Serve")
+	}()
+
+	sigC := make(chan os.Signal, 1)
+	signal.Notify(sigC, syscall.SIGTERM)
+	for {
+		if <-sigC == syscall.SIGTERM {
+			log.Printf("got SIGTERM")
+			s.GracefulStop()
+			log.Printf("after GracefulStop")
+			return
+		}
+	}
 }
