@@ -34,19 +34,19 @@
 package main
 
 import (
+	"flag"
+	"io/ioutil"
 	"log"
 	"net"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 
 	pb "github.com/hnakamur/hello_grpc_go/helloworld"
+	"github.com/hnakamur/serverstarter"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-)
-
-const (
-	port = ":50051"
 )
 
 // server is used to implement hellowrld.GreeterServer.
@@ -58,28 +58,53 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 }
 
 func main() {
+	addr := flag.String("addr", ":50051", "server address")
+	pidFile := flag.String("pidfile", "greeter_server.pid", "pid file")
+	flag.Parse()
+
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
 
-	lis, err := net.Listen("tcp", port)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+	pid := os.Getpid()
+	starter := serverstarter.New()
+	if starter.IsMaster() {
+		log.Printf("pid=%d, master started.", pid)
+		err := ioutil.WriteFile(*pidFile, []byte(strconv.Itoa(pid)), 0666)
+		if err != nil {
+			log.Fatalf("failed to write pid file %s; %v", *pidFile, err)
+		}
+
+		l, err := net.Listen("tcp", *addr)
+		if err != nil {
+			log.Fatalf("failed to listen %s; %v", *addr, err)
+		}
+		if err = starter.RunMaster(l); err != nil {
+			log.Fatalf("failed to run master; %v", err)
+		}
+		return
 	}
+
+	listeners, err := starter.Listeners()
+	if err != nil {
+		log.Fatalf("failed to get listeners; %v", err)
+	}
+	l := listeners[0]
+
 	s := grpc.NewServer()
 	pb.RegisterGreeterServer(s, &server{})
 
-	go func() {
-		s.Serve(lis)
-		log.Printf("after Serve")
-	}()
-
 	sigC := make(chan os.Signal, 1)
 	signal.Notify(sigC, syscall.SIGTERM)
-	for {
-		if <-sigC == syscall.SIGTERM {
-			log.Printf("got SIGTERM")
-			s.GracefulStop()
-			log.Printf("after GracefulStop")
-			return
+	go func() {
+		for {
+			if <-sigC == syscall.SIGTERM {
+				log.Printf("pid=%d, got SIGTERM", pid)
+				s.GracefulStop()
+				log.Printf("pid=%d, after GracefulStop", pid)
+			}
 		}
-	}
+	}()
+
+	log.Printf("pid=%d, worker started.", pid)
+	s.Serve(l)
+	log.Printf("pid=%d, after Serve", pid)
 }
