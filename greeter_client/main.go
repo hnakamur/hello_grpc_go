@@ -60,21 +60,21 @@ func main() {
 
 	if *loop {
 		for {
-			err := sayHello(*addr, *name)
+			err := sayHello(*addr, *name, false)
 			if err != nil {
 				log.Print(err)
 			}
 			time.Sleep(*sleep)
 		}
 	} else {
-		err := sayHello(*addr, *name)
+		err := sayHello(*addr, *name, true)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 }
 
-func sayHello(address, name string) error {
+func sayHello(address, name string, showResponse bool) error {
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -87,6 +87,8 @@ func sayHello(address, name string) error {
 	if err != nil {
 		return fmt.Errorf("could not greet: %v", err)
 	}
-	log.Printf("Greeting: %s", r.Message)
+	if showResponse {
+		log.Printf("Greeting: %s", r.Message)
+	}
 	return nil
 }
