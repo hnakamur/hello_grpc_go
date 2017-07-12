@@ -92,19 +92,26 @@ func main() {
 	s := grpc.NewServer()
 	pb.RegisterGreeterServer(s, &server{})
 
-	sigC := make(chan os.Signal, 1)
-	signal.Notify(sigC, syscall.SIGTERM)
 	go func() {
-		for {
-			if <-sigC == syscall.SIGTERM {
-				log.Printf("pid=%d, got SIGTERM", pid)
-				s.GracefulStop()
-				log.Printf("pid=%d, after GracefulStop", pid)
-			}
-		}
+		log.Printf("pid=%d, worker started.", pid)
+		s.Serve(l)
+		log.Printf("pid=%d, after Serve", pid)
 	}()
 
-	log.Printf("pid=%d, worker started.", pid)
-	s.Serve(l)
-	log.Printf("pid=%d, after Serve", pid)
+	ppid := os.Getppid()
+	err = syscall.Kill(ppid, syscall.SIGUSR1)
+	if err != nil {
+		log.Fatalf("failed to send SIGUSR1 to parent, ppid=%d, err=%v", ppid, err)
+	}
+
+	sigC := make(chan os.Signal, 1)
+	signal.Notify(sigC, syscall.SIGTERM)
+	for {
+		if <-sigC == syscall.SIGTERM {
+			log.Printf("pid=%d, got SIGTERM", pid)
+			s.GracefulStop()
+			log.Printf("pid=%d, after GracefulStop", pid)
+			return
+		}
+	}
 }

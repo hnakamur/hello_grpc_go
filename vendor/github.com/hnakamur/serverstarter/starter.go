@@ -62,10 +62,14 @@ func (s *Starter) RunMaster(listeners ...net.Listener) error {
 	}
 	s.workingDirectory = wd
 
+	sigC2 := make(chan os.Signal, 1)
+	signal.Notify(sigC2, syscall.SIGUSR1)
+
 	childPid, err := s.startProcess()
 	if err != nil {
 		return fmt.Errorf("error in RunMaster after starting worker; %v", err)
 	}
+	<-sigC2
 
 	sigC := make(chan os.Signal, 1)
 	// NOTE: The signals SIGKILL and SIGSTOP may not be caught by a program.
@@ -79,6 +83,7 @@ func (s *Starter) RunMaster(listeners ...net.Listener) error {
 			if err != nil {
 				return fmt.Errorf("error in RunMaster after starting new worker; %v", err)
 			}
+			<-sigC2
 
 			err = syscall.Kill(childPid, syscall.SIGTERM)
 			if err != nil {
